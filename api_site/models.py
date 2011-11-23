@@ -6,16 +6,20 @@ from django.conf.urls.defaults import patterns,url,include
 class ModelApi(object):
     emitter_format = 'json'
     fields = ()
+    search_fields = ()
     handler = BaseHandler
     url_attrs = {}
 
-    def __init__(self,model): 
+    def __init__(self,model,**kwargs): 
         self.model = model
+        for k,v in kwargs.items():
+            self.__dict__[k] = v
 
     def get_urls(self):
+        if not hasattr(self,'name'): self.name = self.model.__name__
         # Create Handler
         # Give this new form class a reasonable name.
-        handler_class_name = self.model.__name__ + 'Handler'
+        handler_class_name = self.name + 'Handler'
 
         # Class attributes for the new form class.
         handler_class_attrs = {
@@ -24,6 +28,9 @@ class ModelApi(object):
         if self.fields:
             handler_class_attrs['fields']=self.fields
 
+        if self.search_fields:
+            handler_class_attrs['search_fields']=self.search_fields
+
         handler_class = type(handler_class_name, (self.handler,), handler_class_attrs)
         resource = Resource(handler_class)
 
@@ -31,13 +38,15 @@ class ModelApi(object):
         if self.emitter_format:
             url_attrs['emitter_format'] = self.emitter_format
 
+        name = self.name.lower()
+
         return patterns('',
-            (r'^%s/'%'fi',
+            (r'^%s/'%name,
                 include( 
                     patterns('',
                         url(r'^$', resource,  url_attrs, name='list'),
                         url(r'^(?P<id>\d+)/$', resource, url_attrs, name='show'),
-                    ),namespace='fi',app_name='fi'
+                    ),namespace=name,app_name=name
                 )
             ),
         )

@@ -9,12 +9,15 @@ class ApiSite(object):
             self.name = name
         self.app_name = app_name
 
-    def register(self,model_or_iterable,config_class=None,**kwargs):
-        if not config_class: config_class = ModelApi
-        self._registry[model_or_iterable] = config_class(model_or_iterable)
+    def register(self,model,config_class=None,**kwargs):
+        name = model.__name__
+        if 'name' in kwargs: name = kwargs['name']
 
-    def unregister(self,model_or_iterable):
-        del(self._registry,model_or_iterable)
+        if not config_class: config_class = ModelApi
+        self._registry[name] = config_class(model,**kwargs)
+
+    def unregister(self,name):
+        del(self._registry,name)
 
     def get_urls(self):
         from django.conf.urls.defaults import patterns, url, include
@@ -42,17 +45,20 @@ class ApiSite(object):
         urlpatterns = []
 
         # Add in each model's views.
-        for model, model_api_config in self._registry.iteritems():
-            ns = model._meta.app_label
+        for model_name, model_api_config in self._registry.iteritems():
+            app = model_api_config.model._meta.app_label
             urlpatterns += patterns('',
-                url(r'^%s/' % ns,
+                url(r'^%s/' % app,
                     include(
                         model_api_config.urls, 
-                        namespace=ns, 
-                        app_name=ns))
+                        namespace=app, 
+                        app_name=app))
             )
-        print urlpatterns
         return urlpatterns
+
+    def autodiscover(self):
+        from duct_tape.autodiscover import autodiscover as _ad
+        _ad(module_name=self.app_name)
 
     @property
     def urls(self):
