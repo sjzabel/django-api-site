@@ -5,10 +5,10 @@ from django.conf.urls.defaults import patterns,url,include
 
 class ModelApi(object):
     emitter_format = 'json'
-    fields = ()
-    search_fields = ()
+    fields = None
+    search_fields = None
     handler = BaseHandler
-    url_attrs = {}
+    url_attrs = None
 
     def __init__(self,model,**kwargs): 
         self.model = model
@@ -34,9 +34,11 @@ class ModelApi(object):
         handler_class = type(handler_class_name, (self.handler,), handler_class_attrs)
         resource = Resource(handler_class)
 
-        url_attrs = self.url_attrs
+        if not self.url_attrs:
+            self.url_attrs = {}
+
         if self.emitter_format:
-            url_attrs['emitter_format'] = self.emitter_format
+            self.url_attrs['emitter_format'] = self.emitter_format
 
         name = self.name.lower()
 
@@ -44,8 +46,8 @@ class ModelApi(object):
             (r'^%s/'%name,
                 include( 
                     patterns('',
-                        url(r'^$', resource,  url_attrs, name='list'),
-                        url(r'^(?P<id>\d+)/$', resource, url_attrs, name='show'),
+                        url(r'^$', resource,  self.url_attrs, name='list'),
+                        url(r'^(?P<id>\d+)/$', resource, self.url_attrs, name='show'),
                     ),namespace=name,app_name=name
                 )
             ),
