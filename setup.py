@@ -19,9 +19,7 @@ setup(
     description = "Api site is a wrapper on top of piston that provides some utilities for creating an api-site",
     author = 'Stephen J. Zabel',
     author_email = 'sjzabel@gmail.com',
-    packages = find_packages('.'),
-    package_dir = {'','.'},
-    zip_safe = False,
+    packages = ['api_site'],
     classifiers = [
         'Development Status :: 3 - Alpha',
         'Framework :: Django',
