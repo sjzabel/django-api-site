@@ -7,6 +7,6 @@ __authors__=[
     'Stephen Zabel <sjzabel@gmail.com>'
 ]
 
-#from api_site.sites import site
-#from api_site.models import ModelApi
+from api_site.sites import site
+from api_site.models import ModelApi
 
