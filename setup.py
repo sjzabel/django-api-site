@@ -11,7 +11,7 @@ except ImportError:
 import os
 
 setup(
-    name = "django-api-site",
+    name = "api_site",
     version = "0.3",
     url = 'https://github.com/sjzabel/django-api-site',
     download_url = 'https://github.com/sjzabel/django-api-site',
@@ -20,8 +20,8 @@ setup(
     author = 'Stephen J. Zabel',
     author_email = 'sjzabel@gmail.com',
     packages = ['api_site'],
-    #namespace_packages = ['api_site'],
-    #include_package_data = True,
+    packages = find_packages('.'),
+    package_dir = {'','.'},
     zip_safe = False,
     classifiers = [
         'Development Status :: 3 - Alpha',
