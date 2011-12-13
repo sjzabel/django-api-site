@@ -2,11 +2,11 @@
 # -*- coding: utf-8 -*-
 
 try:
-    from setuptools import setup
+    from setuptools import setup, find_packages
 except ImportError:
     import ez_setup
     ez_setup.use_setuptools()
-    from setuptools import setup
+    from setuptools import setup, find_packages
     
 import os
 
@@ -19,7 +19,6 @@ setup(
     description = "Api site is a wrapper on top of piston that provides some utilities for creating an api-site",
     author = 'Stephen J. Zabel',
     author_email = 'sjzabel@gmail.com',
-    packages = ['api_site'],
     packages = find_packages('.'),
     package_dir = {'','.'},
     zip_safe = False,
